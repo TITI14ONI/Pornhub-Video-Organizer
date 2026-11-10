@@ -1,0 +1,52 @@
+{
+    "name": "Pornhub-Video-Organizer",
+    "version": "1.0.0",
+    "description": "Trie tes vidéos adultes en liens : tu réponds oui/non aux premières, le programme apprend tes goûts et classe le reste. En terminal ou en application de bureau.",
+    "type": "module",
+    "main": "desktop/main.js",
+    "scripts": {
+        "start": "node src/curate.js",
+        "random": "node src/random.js",
+        "app": "node scripts/start-app.js",
+        "dist": "electron-builder --win nsis",
+        "dist:portable": "electron-builder --win portable"
+    },
+    "engines": {
+        "node": ">=20"
+    },
+    "keywords": [
+        "curation",
+        "electron",
+        "cli",
+        "puppeteer",
+        "adult"
+    ],
+    "dependencies": {
+        "pornhub.js": "^1.15.0",
+        "puppeteer-core": "^24.0.0"
+    },
+    "devDependencies": {
+        "electron": "^38.0.0",
+        "electron-builder": "^26.0.0"
+    },
+    "build": {
+        "appId": "com.pornhubvideoorganizer.app",
+        "productName": "Pornhub Video Organizer",
+        "asar": true,
+        "files": [
+            "desktop/**",
+            "src/**",
+            "package.json"
+        ],
+        "directories": {
+            "output": "dist"
+        },
+        "win": {
+            "target": "nsis"
+        },
+        "nsis": {
+            "oneClick": true,
+            "perMachine": false
+        }
+    }
+}

@@ -1,0 +1,17 @@
+# Dépendances
+node_modules/
+
+# Données personnelles : tes listes, ton profil Opera, tes secrets
+liked.json
+disliked.json
+opera-profile/
+config.json
+.env
+dump.html
+# Divers
+dist/
+*.log
+app-log.txt
+err.txt
+.DS_Store
+Thumbs.db

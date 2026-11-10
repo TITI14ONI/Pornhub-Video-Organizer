@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pornhub Video Organizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ========== Questionnaire de première ouverture ========== -->
+<section id="wizard" class="hidden">
+    <div class="wizard-card">
+        <div class="wizard-progress"><div id="wizard-bar"></div></div>
+        <div id="wizard-step" class="step"></div>
+        <div id="wizard-body"></div>
+        <div id="wizard-error" class="error"></div>
+        <div class="actions">
+            <button id="wizard-back" class="btn secondary" type="button">Retour</button>
+            <button id="wizard-next" class="btn" type="button">Suivant</button>
+        </div>
+    </div>
+</section>
+
+<!-- ========== Application ========== -->
+<div id="shell" class="hidden">
+    <nav id="nav">
+        <div class="logo">Pornhub Video Organizer</div>
+        <button type="button" data-view="sort" class="active">🎯 Trier</button>
+        <button type="button" data-view="random">🎲 Au hasard</button>
+        <button type="button" data-view="library">📚 Bibliothèque</button>
+        <button type="button" data-view="settings">⚙️ Paramètres</button>
+        <div class="nav-foot">Contenu 18+<br>Tout reste sur ton ordinateur.</div>
+    </nav>
+
+    <main>
+        <!-- ----- Trier ----- -->
+        <section id="view-sort" class="view">
+            <h2>Trier de nouvelles vidéos</h2>
+            <p class="muted">
+                L'application te montre des vidéos une par une. Réponds 👍 ou 👎 : après quelques réponses, elle apprend
+                tes goûts et trie le reste toute seule. Rien n'est téléchargé, seuls les liens sont sauvegardés.
+            </p>
+            <div id="import-sort" class="banner hidden"></div>
+
+            <div id="sort-setup">
+                <div class="form-grid">
+                    <label>Mots-clés (facultatif)
+                        <input id="sort-query" type="text" maxlength="100" placeholder="Vide = les vidéos du moment">
+                    </label>
+                    <label>Ordre (si pas de mot-clé)
+                        <select id="sort-order">
+                            <option value="hot">Tendance</option>
+                            <option value="viewed">Les plus vues</option>
+                            <option value="rated">Les mieux notées</option>
+                            <option value="new">Les plus récentes</option>
+                        </select>
+                    </label>
+                    <label>Pages à parcourir
+                        <input id="sort-pages" type="number" min="1" max="50">
+                    </label>
+                    <label>Avis à donner au total (nombre ou all)
+                        <input id="sort-ask" type="text" maxlength="4">
+                    </label>
+                </div>
+                <p class="hint">Une page contient environ 30 vidéos. Les vidéos déjà classées ne sont jamais reproposées.</p>
+                <p id="sort-ask-hint" class="hint"></p>
+                <div class="actions">
+                    <button id="sort-start" class="btn" type="button">▶ Lancer le tri</button>
+                </div>
+            </div>
+
+            <div id="sort-run" class="hidden">
+                <div class="run-top">
+                    <div id="sort-status" class="statusline">Démarrage…</div>
+                    <button id="sort-stop" class="btn secondary small" type="button">⏹ Arrêter</button>
+                </div>
+                <div id="sort-progress" class="progress hidden">
+                    <div class="progress-text"></div>
+                    <div class="progress-track"><div class="progress-bar"></div></div>
+                </div>
+                <div id="sort-warnings"></div>
+                <div id="sort-notice" class="notice hidden"></div>
+                <div id="sort-card"></div>
+                <div id="sort-summary" class="hidden"></div>
+                <div id="sort-auto" class="auto-box hidden"></div>
+                <details class="details">
+                    <summary>Détails techniques</summary>
+                    <div id="sort-log" class="log"></div>
+                </details>
+            </div>
+        </section>
+
+        <!-- ----- Au hasard ----- -->
+        <section id="view-random" class="view hidden">
+            <h2>Une vidéo au hasard</h2>
+            <p class="muted">
+                Tire une vidéo parmi celles que tu as déjà sauvegardées, puis dis si tu l'as regardée et si elle te plaît.
+                Elle s'ouvre dans un onglet Opera GX unique. Après les deux réponses, la sauvegarde est mise à jour et l'onglet passe à une autre vidéo.
+                Utilise « Arrêter » pour terminer la session.
+            </p>
+            <div id="random-setup">
+                <label class="check">
+                    <input id="random-all" type="checkbox">
+                    <span>Inclure aussi les vidéos déjà regardées</span>
+                </label>
+                <div class="actions">
+                    <button id="random-start" class="btn" type="button">🎲 Tirer une vidéo</button>
+                </div>
+            </div>
+            <div id="random-run" class="hidden">
+                <div class="run-top">
+                    <div id="random-status" class="statusline"></div>
+                    <button id="random-stop" class="btn secondary small" type="button">⏹ Annuler</button>
+                </div>
+                <div id="random-card"></div>
+                <div id="random-question" class="question-box hidden"></div>
+                <div id="random-result" class="hidden"></div>
+                <details class="details">
+                    <summary>Détails techniques</summary>
+                    <div id="random-log" class="log"></div>
+                </details>
+            </div>
+        </section>
+
+        <!-- ----- Bibliothèque ----- -->
+        <section id="view-library" class="view hidden">
+            <h2>Bibliothèque</h2>
+            <div id="import-library" class="banner hidden"></div>
+            <div class="library-bar">
+                <div class="tabs">
+                    <button id="lib-tab-liked" class="tab active" type="button" data-tab="liked">👍 Aimées</button>
+                    <button id="lib-tab-disliked" class="tab" type="button" data-tab="disliked">👎 Refusées</button>
+                </div>
+                <input id="library-filter" type="text" placeholder="Filtrer : titre, chaîne, tag…">
+                <select id="library-sort">
+                    <option value="recent">Les plus récentes</option>
+                    <option value="old">Les plus anciennes</option>
+                    <option value="az">Titre A → Z</option>
+                </select>
+                <button id="library-import" class="btn secondary small" type="button">Importer des sauvegardes…</button>
+            </div>
+            <p id="library-count" class="muted"></p>
+            <div id="library-list"></div>
+            <div class="actions"><button id="library-more" class="btn secondary hidden" type="button">Afficher plus</button></div>
+        </section>
+
+        <!-- ----- Paramètres ----- -->
+        <section id="view-settings" class="view hidden">
+            <h2>Paramètres</h2>
+            <p class="muted">Ajuste les préférences de l'application. Les questions liées à Opera GX ou au VPN n'apparaissent que si elles te concernent.</p>
+            <h3 class="settings-heading">Configuration actuelle</h3>
+            <div id="settings-plan" class="plan-box"></div>
+            <div id="settings-body"></div>
+            <div id="settings-status" class="status"></div>
+            <div class="actions">
+                <button id="settings-save" class="btn" type="button">Enregistrer</button>
+                <button id="settings-redo" class="btn secondary" type="button">Refaire le questionnaire</button>
+            </div>
+            <h3 class="section-title">Mes données</h3>
+            <p class="help">Tes listes (aimées, refusées) sont enregistrées ici, sur ton ordinateur :</p>
+            <p id="settings-datapath" class="path"></p>
+            <div class="actions">
+                <button id="settings-import" class="btn secondary" type="button">Importer d'anciennes sauvegardes…</button>
+                <button id="settings-folder" class="btn secondary" type="button">Ouvrir le dossier</button>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="renderer.js"></script>
+</body>
+</html>
